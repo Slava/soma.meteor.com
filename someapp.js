@@ -123,19 +123,21 @@ if (Meteor.isClient) {
           });
         }
 
-        // Create the DIV to hold the control and call the HomeControl() constructor
-        // passing in this DIV.
-        var homeControlDiv = document.createElement('div');
-        var homeControl = new HomeControl(homeControlDiv, map, 1);
+        Meteor.setTimeout(function () {
+          // Create the DIV to hold the control and call the HomeControl() constructor
+          // passing in this DIV.
+          var homeControlDiv = document.createElement('div');
+          var homeControl = new HomeControl(homeControlDiv, map, 1);
 
-        homeControlDiv.index = 1;
-        map.controls[google.maps.ControlPosition.TOP_RIGHT].push(homeControlDiv);
+          homeControlDiv.index = 1;
+          map.controls[google.maps.ControlPosition.TOP_RIGHT].push(homeControlDiv);
 
-        var homeControlDiv = document.createElement('div');
-        var homeControl = new HomeControl(homeControlDiv, map);
+          var homeControlDiv = document.createElement('div');
+          var homeControl = new HomeControl(homeControlDiv, map);
 
-        homeControlDiv.index = 2;
-        map.controls[google.maps.ControlPosition.TOP_RIGHT].push(homeControlDiv);
+          homeControlDiv.index = 2;
+          map.controls[google.maps.ControlPosition.TOP_RIGHT].push(homeControlDiv);
+        }, 400);
       }
     });
   });
