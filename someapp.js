@@ -13,7 +13,7 @@ if (Meteor.isClient) {
     map = new google.maps.Map(document.getElementById("map-canvas"),
       mapOptions);
 
-    var p = Session.get('location');
+    var p = [-122.41544999999999, 37.7745897];
     var p2 = {
       lng: p[0],
       lat: p[1]
@@ -22,10 +22,17 @@ if (Meteor.isClient) {
     map.setCenter(new google.maps.LatLng(p2.lat, p2.lng));
     var marker = new google.maps.Marker({
       position: new google.maps.LatLng(p2.lat, p2.lng),
+      draggable:true,
+      animation: google.maps.Animation.DROP,
       title:'That\'s me!',
       icon:'http://maps.google.com/mapfiles/ms/icons/blue-dot.png'
     });
     marker.setMap(map);
+    google.maps.event.addListener(marker, 'dragend', function() {
+      var pos = marker.getPosition();
+      console.log(pos);
+      Session.set('location', [pos.ob, pos.nb]);
+    });
 
     Session.set('map', true);
   };
@@ -37,6 +44,7 @@ if (Meteor.isClient) {
   Meteor.startup(function () {
     var markers = [];
     var oldRadius = 100;
+    var oldLoc = Session.get('location');
     var clearMarkers = function() {
       markers.forEach(function (x) {
         x.setMap(null);
@@ -47,9 +55,10 @@ if (Meteor.isClient) {
     Deps.autorun(function() {
       var isMap = Session.get('map');
       if(isMap) {
-        if (Session.get('radius') < oldRadius)
+        if (Session.get('radius') < oldRadius || !EJSON.equals(Session.get('location'), oldLoc))
           clearMarkers();
         oldRadius = Session.get('radius');
+        oldLoc = Session.get('location');
         var allPosts = c.find({ location: {
           $near: {
             $geometry: {
